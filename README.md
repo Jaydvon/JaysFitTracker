@@ -1,5 +1,33 @@
 # JaysFitTracker
 
+## Open the app
+
+In VS Code, open `assets/html/index.html` with **Live Server** (the project is configured for port 5501). You can also serve this folder with `python -m http.server 5501`, then visit `http://localhost:5501`. No build step or external packages are required.
+
+## Implemented features
+
+- Dashboard with total workouts, active minutes, logged calorie estimates, and current streak.
+- Add, edit, delete, search, and filter workouts; record activity, date, duration, calories, intensity, and notes.
+- Weekly workout, minute, and calorie goals with immediate progress updates.
+- Monday–Sunday calendar and historical weekly summaries with activity charts.
+- Motivational messages and six achievements based on workout history.
+- Responsive dark interface, keyboard-accessible forms, and a custom neon-green SVG logo in `assets/images/logo.svg`.
+
+Data is saved in this browser's local storage. It is not synced between devices or browsers, and clearing site data removes it. Use the same browser and server address to retain your records. No account or backend is required. Calories are manually entered estimates; blank calorie entries count as zero. Changing goals changes comparisons for all weeks. Achievements are recalculated when workouts are changed or removed. The current streak includes consecutive activity through today, or through yesterday if today has no workout yet.
+
+## Project files
+
+- `assets/html/index.html`: page structure and workout dialogs
+- `assets/css/style.css`: layout, colors, and responsive styles
+- `assets/js/script.js`: navigation, storage, workout management, goals, and statistics
+- `index.html`: forwards the project root to the app
+
+## Verification
+
+Checked JavaScript syntax and tested in a browser: logging a workout, persistence after refresh, editing duration, searching, changing a goal, milestone unlock, current streak, weekly totals, historical-week navigation, and deleting the test workout. Checked the dashboard at a 390px mobile viewport with no horizontal overflow. No browser errors were reported. Test data was removed and default goals restored.
+
+## Original concept
+
 I am going to create a fitness tracking application called Jay's Fit Tracker that helps people stay motivated,
 organized, and consistent with their workout routines. This application will allow users to set personal goals for
 the week and be able to track the goal progress in real time whether its calories burned or exercise durations. The

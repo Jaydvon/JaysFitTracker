@@ -2,14 +2,151 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Jay'sFitness Tracker</title>
-    <link rel="stylesheet" href="/src/style.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#10130f" />
+    <meta
+      name="description"
+      content="Log workouts, set weekly goals, and celebrate your progress with Jay's Fit Tracker."
+    />
+    <title>Jay's Fit Tracker</title>
+    <link rel="icon" type="image/svg+xml" href="../images/logo.svg" />
+    <link rel="stylesheet" href="../css/style.css" />
+    <script defer src="../js/script.js"></script>
   </head>
-
   <body>
-    <div id="app"></div>
+    <a class="skip" href="#main">Skip to content</a>
+    <aside class="sidebar">
+      <a class="brand" href="#dashboard" aria-label="Jay's Fit Tracker home"
+        ><img src="../images/logo.svg" alt="" width="46" height="46" /><span
+          >JAY’S<span class="brand-sub">FIT TRACKER</span></span
+        ></a
+      >
+      <div class="nav-label">YOUR WORKSPACE</div>
+      <nav aria-label="Main navigation">
+        <a href="#dashboard" data-page="dashboard"
+          ><span data-icon="grid"></span>Overview</a
+        ><a href="#workouts" data-page="workouts"
+          ><span data-icon="activity"></span>My workouts</a
+        ><a href="#progress" data-page="progress"
+          ><span data-icon="chart"></span>Progress</a
+        ><a href="#goals" data-page="goals"
+          ><span data-icon="target"></span>Weekly goals</a
+        ><a href="#achievements" data-page="achievements"
+          ><span data-icon="award"></span>Achievements</a
+        >
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="mini-mark">J<span>+</span></div>
+        <strong>A little stronger.<br />Every single day.</strong>
+        <p>Your pace. Your progress.</p>
+        <div class="local-status"><i></i> Saved on this device</div>
+      </div>
+    </aside>
+    <div class="workspace">
+      <header class="topbar">
+        <span>YOUR FITNESS. <strong>YOUR JOURNEY.</strong></span
+        ><span class="today" id="today"></span
+        ><span class="avatar" aria-label="Personal workspace">J</span>
+      </header>
+      <main id="main" tabindex="-1"></main>
+      <footer>
+        JAY’S FIT TRACKER <span>Small steps. Lasting change.</span>
+      </footer>
+    </div>
+    <dialog id="workout-dialog" aria-labelledby="dialog-title">
+      <form id="workout-form">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">SHOWING UP COUNTS</p>
+            <h2 id="dialog-title">Log a workout</h2>
+          </div>
+          <button
+            type="button"
+            class="icon-button"
+            data-close
+            aria-label="Close workout form"
+          >
+            ×
+          </button>
+        </div>
+        <input type="hidden" name="id" /><label
+          >Workout name<input
+            name="name"
+            maxlength="80"
+            placeholder="e.g. Morning walk"
+            required
+        /></label>
+        <div class="form-grid">
+          <label
+            >Workout type<select name="type">
+              <option>Walking</option>
+              <option>Running</option>
+              <option>Strength</option>
+              <option>Cycling</option>
+              <option>Swimming</option>
+              <option>Yoga</option>
+              <option>Other</option>
+            </select></label
+          ><label>Date<input name="date" type="date" required /></label>
+        </div>
+        <div class="form-grid">
+          <label
+            >Duration (minutes)<input
+              name="minutes"
+              type="number"
+              min="1"
+              max="1440"
+              step="1"
+              placeholder="30"
+              required /></label
+          ><label
+            >Calories burned <span class="optional">(optional)</span
+            ><input
+              name="calories"
+              type="number"
+              min="0"
+              max="20000"
+              step="1"
+              placeholder="Leave blank if unknown"
+          /></label>
+        </div>
+        <label
+          >Intensity<select name="intensity">
+            <option>Moderate</option>
+            <option>Light</option>
+            <option>Vigorous</option>
+          </select></label
+        ><label
+          >Notes <span class="optional">(optional)</span
+          ><textarea
+            name="notes"
+            rows="3"
+            maxlength="500"
+            placeholder="How did it feel? What went well?"
+          ></textarea>
+        </label>
+        <p class="helper">
+          Calories are your own estimate, not a measured value.
+        </p>
+        <div class="form-actions">
+          <button type="button" class="button secondary" data-close>
+            Cancel</button
+          ><button class="button primary" type="submit">
+            Save workout <span>↗</span>
+          </button>
+        </div>
+      </form>
+    </dialog>
+    <dialog id="delete-dialog" aria-labelledby="delete-title">
+      <h2 id="delete-title">Delete this workout?</h2>
+      <p>This removes the workout and updates your totals and goal progress.</p>
+      <div class="form-actions">
+        <button class="button secondary" data-cancel-delete>Keep workout</button
+        ><button class="button danger" id="confirm-delete">
+          Delete workout
+        </button>
+      </div>
+    </dialog>
+    <div id="toast" role="status" aria-live="polite"></div>
   </body>
 </html>
-
-<script type="module" src="/src/main.js"></script>
