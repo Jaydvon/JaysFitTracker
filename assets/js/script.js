@@ -311,6 +311,54 @@
     [...state.workouts].sort(
       (a, b) => b.date.localeCompare(a.date) || b.id.localeCompare(a.id),
     );
+
+  const motivationSlides = [
+    ['YOUR NEXT CHAPTER STARTS HERE','Small steps today.','Stronger you tomorrow.','Find your rhythm, celebrate your progress, and keep moving forward.'],
+    ['YOUR EFFORT MATTERS','Show up for yourself.','One workout at a time.','Every session is a chance to build a little more confidence.'],
+    ['PROGRESS AT YOUR PACE','You don’t need perfect.','You just need your next step.','Start where you are. Small, consistent efforts add up.'],
+    ['MAKE ROOM TO GROW','Move with purpose.','Rest with pride.','Recovery is part of your journey. Come back ready for your next chapter.']
+  ];
+  let motivationIndex=0, motivationTimer=null, motivationPaused=false, celebrationTimer=null;
+  const cheers=['Good job!','You’re amazing!','Congratulations!','Whoopee!','You are on the road to success!'];
+  let cheerIndex=0;
+  try { cheerIndex=Number(localStorage.getItem('jays-cheer-index'))||0; } catch {}
+  function motivationCard(){
+    const slide=motivationSlides[motivationIndex];
+    return `<section class="hero motivation-carousel" aria-label="Motivational cards" aria-roledescription="carousel"><div class="motivation-copy"><p class="eyebrow">${slide[0]}</p><h2>${slide[1]}<br><em>${slide[2]}</em></h2><p class="motivation-description">${slide[3]}</p></div><div class="hero-art" aria-hidden="true"><span>↗</span></div><div class="slide-controls"><button type="button" data-slide="-1" aria-label="Previous motivational card">‹</button><span class="slide-count">${motivationIndex+1} / 4</span><button type="button" data-slide="1" aria-label="Next motivational card">›</button><button type="button" data-slide-pause aria-pressed="${motivationPaused}">${motivationPaused?'Resume':'Pause'} slideshow</button></div></section>`;
+  }
+  function updateMotivation(){
+    const hero=$('.motivation-carousel');if(!hero)return;
+    const slide=motivationSlides[motivationIndex];
+    $('.eyebrow',hero).textContent=slide[0];
+    $('h2',hero).innerHTML=`${slide[1]}<br><em>${slide[2]}</em>`;
+    $('.motivation-description',hero).textContent=slide[3];
+    $('.slide-count',hero).textContent=`${motivationIndex+1} / 4`;
+  }
+  function startMotivation(){
+    clearInterval(motivationTimer);motivationTimer=null;
+    if(currentPage()!=='dashboard'||motivationPaused)return;
+    motivationTimer=setInterval(()=>{
+      const hero=$('.motivation-carousel');
+      if(document.hidden||!hero||hero.contains(document.activeElement)||hero.matches(':hover'))return;
+      motivationIndex=(motivationIndex+1)%motivationSlides.length;updateMotivation();
+    },30000);
+  }
+  document.addEventListener('click',event=>{
+    const button=event.target.closest('button');if(!button)return;
+    if(button.hasAttribute('data-slide')){motivationIndex=(motivationIndex+Number(button.dataset.slide)+4)%4;updateMotivation();startMotivation();}
+    if(button.hasAttribute('data-slide-pause')){motivationPaused=!motivationPaused;button.textContent=motivationPaused?'Resume slideshow':'Pause slideshow';button.setAttribute('aria-pressed',String(motivationPaused));startMotivation();}
+  });
+  function celebrateWorkout(){
+    const message=cheers[cheerIndex%cheers.length];cheerIndex=(cheerIndex+1)%cheers.length;
+    try{localStorage.setItem('jays-cheer-index',String(cheerIndex));}catch{}
+    const buddy=$('.buddy-note');
+    if(buddy){$('strong',buddy).textContent=message;$('p',buddy).textContent='Workout saved. You showed up for yourself today!';buddy.classList.add('buddy-celebrating');}
+    clearTimeout(celebrationTimer);$('.buddy-celebration-toast')?.remove();
+    const popup=document.createElement('div');popup.className='buddy-note buddy-celebrating buddy-celebration-toast';popup.setAttribute('role','status');
+    popup.innerHTML=`<img src="../images/buddy.svg" alt=""><div><strong>${message}</strong><p>Another workout in the books. You did it!</p></div><button type="button" aria-label="Dismiss celebration">×</button>`;
+    $('button',popup).addEventListener('click',()=>popup.remove());document.body.append(popup);
+    celebrationTimer=setTimeout(()=>{popup.remove();buddy?.classList.remove('buddy-celebrating');},6000);
+  }
   function dashboard() {
     const next =
       milestones().find((m) => m.value < m.target) || milestones()[5];
@@ -319,7 +367,7 @@
         "Every move matters.",
         "Welcome to your personal space for a stronger you.",
       ) +
-      `<section class="hero"><p class="eyebrow">YOUR NEXT CHAPTER STARTS HERE</p><h2>Small steps today.<br><em>Stronger you tomorrow.</em></h2><p>Find your rhythm, celebrate your progress, and keep moving forward.</p><div class="hero-art" aria-hidden="true"><span>↗</span></div></section>` +
+      motivationCard() +
       stats() +
       `<div class="dashboard-grid"><div class="stack">${calendar()}<section class="panel"><div class="section-heading"><h2>Recent workouts</h2><a href="#workouts" class="text-link">View all ↗</a></div>${rows(sorted().slice(0, 3))}</section></div><div class="stack">${goalProgress()}<section class="panel quote-panel"><p class="eyebrow">${icon("bolt")} A LITTLE EXTRA MOTIVATION</p><blockquote id="quote">“${quotes[quoteIndex]}”</blockquote><button class="text-link" data-inspire>Another boost ↗</button></section><section class="panel"><div class="section-heading"><h2>Your next milestone</h2><a class="text-link" href="#achievements">View all ↗</a></div><div class="achievement-mini"><span class="badge-icon">${icon("award")}</span><div><strong>${next.name}</strong><p>${next.description}</p><span class="badge-status">${Math.min(next.value, next.target)} / ${next.target} ${next.value >= next.target ? "· Unlocked" : ""}</span></div></div></section></div></div>`
     );
@@ -804,15 +852,9 @@
     const buddy = document.createElement("div");
     buddy.className = "buddy-note";
     buddy.innerHTML =
-      '<img src="../images/buddy.svg" alt="A smiling, round green fitness buddy with big eyes"><div><strong>A little progress. A big smile.</strong><p>We’re on your team. Take it one comfortable step at a time.</p></div>';
+      '<img src="../images/buddy.svg" alt="A smiling, round green fitness buddy with big eyes"><div><strong>Welcome back!</strong><p>We’re on your team. Take it one comfortable step at a time.</p></div>';
     $("#main").prepend(buddy);
-    if (page === "dashboard") {
-      const nature = document.createElement("section");
-      nature.className = "nature-break";
-      nature.innerHTML =
-        '<img src="../images/nature-scene.svg" alt="Sunlit green hills, trees and a still lake"><div><p class="eyebrow">A MOMENT OUTSIDE</p><h2>Find your little patch of calm.</h2><p>Take a screen break. Notice a tree, the sky, or the light through your window.</p></div>';
-      $("#main").append(nature);
-    }
+    startMotivation();
     document.title = `${{ plan: "90-day plan", dashboard: "Overview", workouts: "My workouts", progress: "Progress", goals: "Weekly goals", achievements: "Achievements" }[page]} · Jay’s Fit Tracker`;
   }
   function toast(message) {
@@ -914,6 +956,7 @@
     }
     $("#workout-dialog").close();
     render();
+    if (!values.id) celebrateWorkout();
     toast(
       milestones().filter((m) => m.value >= m.target).length > unlocked
         ? "Milestone unlocked! Your consistency is paying off."
