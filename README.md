@@ -11,17 +11,17 @@ In VS Code, open the root `index.html` with **Live Server** (the project is conf
 - Weekly workout, minute, and calorie goals with immediate progress updates.
 - Monday–Sunday calendar and historical weekly summaries with activity charts.
 - Motivational messages and six achievements based on workout history.
-- Responsive dark interface, keyboard-accessible forms, and a custom neon-green SVG logo in `assets/images/logo.svg`.
+- Responsive HealthCoach light theme, keyboard-accessible forms, and a custom blue-and-white SVG logo in `assets/images/logo.svg`.
 
 Data is saved in this browser's local storage. It is not synced between devices or browsers, and clearing site data removes it. Use the same browser and server address to retain your records. No account or backend is required. Calories are manually entered estimates; blank calorie entries count as zero. Changing goals changes comparisons for all weeks. Achievements are recalculated when workouts are changed or removed. The current streak includes consecutive activity through today, or through yesterday if today has no workout yet.
 
 ## Project files
 
-- `assets/html/tracker.html`: page structure and workout dialogs
 - `assets/css/style.css`: layout, colors, and responsive styles
 - `assets/js/script.js`: navigation, storage, workout management, goals, and statistics
-- `index.html`: opens the HealthCoach-based tracker and preserves section links
-- `healthcoach-master/index.html`: main app with the template slideshow and tracker navigation
+- `assets/fonts`: original HealthCoach Flaticon font files
+- `assets/scss`: original HealthCoach and Bootstrap stylesheet sources
+- `index.html`: main app with the HealthCoach slideshow, tracker navigation, and workout dialogs
 
 ## Verification
 
