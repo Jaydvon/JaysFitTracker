@@ -1,6 +1,7 @@
 (() => {
   "use strict";
   const $ = (selector, root = document) => root.querySelector(selector);
+  const imageDirectory = new URL("../images/", document.currentScript.src).href;
   const icons = {
     grid: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
     activity: '<path d="M2 12h5l3-8 4 16 3-8h5"/>',
@@ -355,7 +356,7 @@
     if(buddy){$('strong',buddy).textContent=message;$('p',buddy).textContent='Workout saved. You showed up for yourself today!';buddy.classList.add('buddy-celebrating');}
     clearTimeout(celebrationTimer);$('.buddy-celebration-toast')?.remove();
     const popup=document.createElement('div');popup.className='buddy-note buddy-celebrating buddy-celebration-toast';popup.setAttribute('role','status');
-    popup.innerHTML=`<img src="../images/buddy.svg" alt=""><div><strong>${message}</strong><p>Another workout in the books. You did it!</p></div><button type="button" aria-label="Dismiss celebration">×</button>`;
+    popup.innerHTML=`<img src="${imageDirectory}buddy.svg" alt=""><div><strong>${message}</strong><p>Another workout in the books. You did it!</p></div><button type="button" aria-label="Dismiss celebration">×</button>`;
     $('button',popup).addEventListener('click',()=>popup.remove());document.body.append(popup);
     celebrationTimer=setTimeout(()=>{popup.remove();buddy?.classList.remove('buddy-celebrating');},6000);
   }
@@ -538,48 +539,45 @@
     if (!persist()) state.plan = old;
   }
   const avatar = $(".avatar");
-  const menu = document.createElement("details");
-  menu.className = "profile-menu";
-  menu.innerHTML =
-    '<summary aria-label="Personal workspace appearance">J <span>⌄</span></summary><div class="appearance-menu"><strong>Appearance</strong><button type="button" data-theme="dark">Dark mode</button><button type="button" data-theme="light">Light mode</button></div>';
-  avatar.replaceWith(menu);
-  const setTheme = (theme) => {
-    document.documentElement.dataset.theme = theme;
-    menu
-      .querySelectorAll("button")
-      .forEach((b) =>
-        b.setAttribute("aria-pressed", String(b.dataset.theme === theme)),
-      );
-  };
-  try {
-    setTheme(localStorage.getItem("jays-theme") === "light" ? "light" : "dark");
-  } catch {
-    setTheme("dark");
-  }
-  menu.addEventListener("click", (e) => {
-    const b = e.target.closest("[data-theme]");
-    if (!b) return;
-    setTheme(b.dataset.theme);
+  if (avatar) {
+    const menu = document.createElement("details");
+    menu.className = "profile-menu";
+    menu.innerHTML =
+      '<summary aria-label="Personal workspace appearance">J <span>⌄</span></summary><div class="appearance-menu"><strong>Appearance</strong><button type="button" data-theme="dark">Dark mode</button><button type="button" data-theme="light">Light mode</button></div>';
+    avatar.replaceWith(menu);
+    const setTheme = (theme) => {
+      document.documentElement.dataset.theme = theme;
+      menu
+        .querySelectorAll("button")
+        .forEach((b) =>
+          b.setAttribute("aria-pressed", String(b.dataset.theme === theme)),
+        );
+    };
     try {
-      localStorage.setItem("jays-theme", b.dataset.theme);
+      setTheme(localStorage.getItem("jays-theme") === "light" ? "light" : "dark");
     } catch {
-      toast("Appearance changed for this visit only.");
+      setTheme("dark");
     }
-    menu.open = false;
-  });
-  document.addEventListener("click", (e) => {
-    if (!menu.contains(e.target)) menu.open = false;
-  });
+    menu.addEventListener("click", (e) => {
+      const b = e.target.closest("[data-theme]");
+      if (!b) return;
+      setTheme(b.dataset.theme);
+      try {
+        localStorage.setItem("jays-theme", b.dataset.theme);
+      } catch {
+        toast("Appearance changed for this visit only.");
+      }
+      menu.open = false;
+    });
+    document.addEventListener("click", (e) => {
+      if (!menu.contains(e.target)) menu.open = false;
+    });
+  }
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
       menu.open = false;
     }
   });
-  const planNav = document.createElement("a");
-  planNav.href = "#plan";
-  planNav.dataset.page = "plan";
-  planNav.innerHTML = icon("target") + "90-day plan";
-  document.querySelector("nav").append(planNav);
 
   let editingPlan = false;
   const direction = (p) =>
@@ -770,7 +768,7 @@
         `${mode === "gain" ? "Strength-focused" : mode === "lose" ? "Cardio + strength" : "Balanced"} plan · 90 days of movement and recovery`,
         false,
       ) +
-      `<section class="panel"><div class="section-heading"><h2>${p.weight} lb toward ${p.target} lb</h2><button class="button secondary" id="edit-plan">Edit plan</button></div><p>Latest weight: ${p.latest || p.weight} lb · Available time: ${p.time || 45} min/day</p>${nutrition}<details><summary>How the estimate works</summary><p>Mifflin–St Jeor resting energy estimate × your selected overall activity factor, then +300 kcal for gain, or up to −300 kcal (at most 15%) for loss. Rounded to 50 kcal. The 90-day deadline does not force a faster change. Recheck your weight trend over 2–3 weeks and adjust with qualified advice; actual needs can differ substantially. Weigh-ins refresh the estimate. Food needs remain on rest days, too.</p><a class="text-link" href="https://pubmed.ncbi.nlm.nih.gov/2305711/">Equation source</a> · <a class="text-link" href="https://www.nhs.uk/live-well/healthy-weight/managing-your-weight/healthy-ways-to-gain-weight/">NHS weight-gain guidance</a></details><form id="weigh-form"><label>Current weight (lb / pounds)<input name="weight" type="number" min="66" max="880" step="0.1" required></label><button class="button secondary">Save weight</button></form><h3>Your training approach</h3><p>${mode === "gain" ? "Monday: chest and shoulders. Wednesday: legs and glutes. Friday: back and arms. Tuesday and Thursday: stretching." : "Tuesday: chest and back. Thursday: legs and glutes. Monday and Friday: brisk walking. Wednesday: cycling."} Weekends are rest days.</p><p>Strength: alternate chair squats, wall or incline push-ups, band rows and glute bridges. Use controlled repetitions, comfortable resistance, and rest between sets. Start with 1–2 sets; add a set or resistance only when comfortable. Session time includes rests and warm-up/cool-down.</p><p class="helper">First two weeks ease in at approximately 75% and 85% of session time, rounded to five-minute increments without exceeding your available time. Then use available time up to 45 minutes for beginners, 60 for regular exercisers, or 90 for experienced exercisers. More time is not automatically better; shorten any session if needed. Weekly goals include the whole session and update automatically. Calorie-burn goals remain separate.</p><button id="stop-plan" class="button secondary">End plan and restore goals</button></section><section class="nature-break"><img src="../images/nature-scene.svg" alt="Quiet lake, layered green hills and evergreen trees"><div><p class="eyebrow">ROOM TO BREATHE</p><h2>Recovery is part of growing.</h2><p>On rest days, enjoy a nature view or a quiet moment outside. No workout to make up.</p></div></section><section class="panel"><h2>Your daily schedule</h2>${days.map((d, i) => `<div class="workout-row"><div><strong>Day ${i + 1} · ${formatDate(d.date)} · ${d.kind}</strong><p>${sessionDescription(d)}</p></div></div>`).join("")}</section>`
+      `<section class="panel"><div class="section-heading"><h2>${p.weight} lb toward ${p.target} lb</h2><button class="button secondary" id="edit-plan">Edit plan</button></div><p>Latest weight: ${p.latest || p.weight} lb · Available time: ${p.time || 45} min/day</p>${nutrition}<details><summary>How the estimate works</summary><p>Mifflin–St Jeor resting energy estimate × your selected overall activity factor, then +300 kcal for gain, or up to −300 kcal (at most 15%) for loss. Rounded to 50 kcal. The 90-day deadline does not force a faster change. Recheck your weight trend over 2–3 weeks and adjust with qualified advice; actual needs can differ substantially. Weigh-ins refresh the estimate. Food needs remain on rest days, too.</p><a class="text-link" href="https://pubmed.ncbi.nlm.nih.gov/2305711/">Equation source</a> · <a class="text-link" href="https://www.nhs.uk/live-well/healthy-weight/managing-your-weight/healthy-ways-to-gain-weight/">NHS weight-gain guidance</a></details><form id="weigh-form"><label>Current weight (lb / pounds)<input name="weight" type="number" min="66" max="880" step="0.1" required></label><button class="button secondary">Save weight</button></form><h3>Your training approach</h3><p>${mode === "gain" ? "Monday: chest and shoulders. Wednesday: legs and glutes. Friday: back and arms. Tuesday and Thursday: stretching." : "Tuesday: chest and back. Thursday: legs and glutes. Monday and Friday: brisk walking. Wednesday: cycling."} Weekends are rest days.</p><p>Strength: alternate chair squats, wall or incline push-ups, band rows and glute bridges. Use controlled repetitions, comfortable resistance, and rest between sets. Start with 1–2 sets; add a set or resistance only when comfortable. Session time includes rests and warm-up/cool-down.</p><p class="helper">First two weeks ease in at approximately 75% and 85% of session time, rounded to five-minute increments without exceeding your available time. Then use available time up to 45 minutes for beginners, 60 for regular exercisers, or 90 for experienced exercisers. More time is not automatically better; shorten any session if needed. Weekly goals include the whole session and update automatically. Calorie-burn goals remain separate.</p><button id="stop-plan" class="button secondary">End plan and restore goals</button></section><section class="nature-break"><img src="${imageDirectory}nature-scene.svg" alt="Quiet lake, layered green hills and evergreen trees"><div><p class="eyebrow">ROOM TO BREATHE</p><h2>Recovery is part of growing.</h2><p>On rest days, enjoy a nature view or a quiet moment outside. No workout to make up.</p></div></section><section class="panel"><h2>Your daily schedule</h2>${days.map((d, i) => `<div class="workout-row"><div><strong>Day ${i + 1} · ${formatDate(d.date)} · ${d.kind}</strong><p>${sessionDescription(d)}</p></div></div>`).join("")}</section>`
     );
   }
   document.addEventListener("submit", (event) => {
@@ -834,14 +832,18 @@
   function render() {
     applyPlan();
     const page = currentPage();
+    const slideshow = $("#welcome-slideshow");
+    if (slideshow) slideshow.hidden = page !== "dashboard";
     $("#today").textContent = new Date().toLocaleDateString(undefined, {
       month: "short",
       day: "numeric",
       year: "numeric",
     });
     document.querySelectorAll("[data-page]").forEach((el) => {
-      el.classList.toggle("active", el.dataset.page === page);
-      if (el.dataset.page === page) el.setAttribute("aria-current", "page");
+      const active = el.dataset.page === page;
+      el.classList.toggle("active", active);
+      el.closest(".nav-item")?.classList.toggle("active", active);
+      if (active) el.setAttribute("aria-current", "page");
       else el.removeAttribute("aria-current");
     });
     $("#main").innerHTML =
@@ -852,7 +854,7 @@
     const buddy = document.createElement("div");
     buddy.className = "buddy-note";
     buddy.innerHTML =
-      '<img src="../images/buddy.svg" alt="A smiling, round green fitness buddy with big eyes"><div><strong>Welcome back!</strong><p>We’re on your team. Take it one comfortable step at a time.</p></div>';
+      `<img src="${imageDirectory}buddy.svg" alt="A smiling, round green fitness buddy with big eyes"><div><strong>Welcome back!</strong><p>We’re on your team. Take it one comfortable step at a time.</p></div>`;
     $("#main").prepend(buddy);
     startMotivation();
     document.title = `${{ plan: "90-day plan", dashboard: "Overview", workouts: "My workouts", progress: "Progress", goals: "Weekly goals", achievements: "Achievements" }[page]} · Jay’s Fit Tracker`;

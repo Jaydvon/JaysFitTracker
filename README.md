@@ -2,7 +2,7 @@
 
 ## Open the app
 
-In VS Code, open `assets/html/tracker.html` with **Live Server** (the project is configured for port 5501). You can also serve this folder with `python -m http.server 5501`, then visit `http://localhost:5501`. No build step or external packages are required.
+In VS Code, open the root `index.html` with **Live Server** (the project is configured for port 5501). You can also serve this folder with `python -m http.server 5501`, then visit `http://localhost:5501`. No build step or external packages are required.
 
 ## Implemented features
 
@@ -20,7 +20,8 @@ Data is saved in this browser's local storage. It is not synced between devices 
 - `assets/html/tracker.html`: page structure and workout dialogs
 - `assets/css/style.css`: layout, colors, and responsive styles
 - `assets/js/script.js`: navigation, storage, workout management, goals, and statistics
-- `index.html`: forwards the project root to the app
+- `index.html`: opens the HealthCoach-based tracker and preserves section links
+- `healthcoach-master/index.html`: main app with the template slideshow and tracker navigation
 
 ## Verification
 

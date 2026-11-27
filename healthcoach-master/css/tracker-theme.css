@@ -1,0 +1,98 @@
+/* HealthCoach owns the site header and slideshow. These styles adapt the tracker widgets. */
+.coach-tracker {
+  --bg: #fff;
+  --panel: #fff;
+  --line: #dce4e8;
+  --muted: #595959;
+  --white: #222;
+  --coach-blue: #1089ff;
+  --coach-green: #a3cb4c;
+  --coach-link: #0068c8;
+  --accent: var(--coach-link);
+  --activity-accent: var(--coach-green);
+  --calorie-accent: var(--coach-blue);
+  font: 400 15px/1.8 Poppins, Arial, sans-serif;
+}
+.coach-tracker .navbar-brand img {
+  margin-right: 4px;
+  vertical-align: middle;
+}
+.coach-tracker #welcome-slideshow[hidden] { display: none; }
+.coach-tracker .workspace { margin-left: 0; }
+.coach-tracker main { max-width: 1140px; }
+.coach-tracker .workspace h1,
+.coach-tracker .workspace h2,
+.coach-tracker .workspace h3 { color: #222; }
+.coach-tracker .panel,
+.coach-tracker .stat,
+.coach-tracker .hero {
+  border-color: var(--line);
+  box-shadow: none;
+}
+.coach-tracker .hero,
+.coach-tracker .buddy-note,
+.coach-tracker .quote-panel,
+.coach-tracker .info-banner {
+  background-color: #f8f9fa;
+}
+.coach-tracker .hero { background-image: none; }
+.coach-tracker .stat-top,
+.coach-tracker .stat-note,
+.coach-tracker .stat-value small,
+.coach-tracker .slide-count,
+.coach-tracker .hero .motivation-description,
+.coach-tracker .hero p:last-child { color: var(--muted); }
+.coach-tracker .stat-value { color: var(--white); }
+.coach-tracker .stat .stat-icon {
+  background: #edf6ff;
+  color: var(--coach-link);
+}
+.coach-tracker .stat:nth-child(even) .stat-icon,
+.coach-tracker .day.completed { background: #edf4dd; }
+.coach-tracker .primary,
+.coach-tracker .primary:hover {
+  background: var(--coach-blue);
+  color: #111;
+}
+.coach-tracker .primary:hover { background: #74bafe; }
+.coach-tracker .secondary,
+.coach-tracker .icon-button,
+.coach-tracker .row-actions button,
+.coach-tracker .slide-controls button {
+  background: #f8f9fa;
+  border-color: var(--line);
+  color: #222;
+}
+.coach-tracker .hero-art span,
+.coach-tracker .text-link,
+.coach-tracker .quote-panel .text-link { color: var(--coach-link); }
+.coach-tracker .slideshow-toggle {
+  position: absolute;
+  z-index: 2;
+  right: 16px;
+  bottom: 12px;
+}
+@media (max-width: 991px) {
+  .coach-tracker .home-slider .slider-text { padding-inline: 15px; }
+}
+.coach-tracker .info-banner,
+.coach-tracker footer,
+.coach-tracker input::placeholder,
+.coach-tracker textarea::placeholder { color: var(--muted); }
+.coach-tracker .day,
+.coach-tracker input,
+.coach-tracker select,
+.coach-tracker textarea,
+.coach-tracker dialog { border-color: var(--line); }
+.coach-tracker .badge-icon {
+  background: #edf4dd;
+  color: #4d651b;
+}
+.coach-tracker .achievement-card.locked .badge-icon {
+  background: #f8f9fa;
+  color: var(--muted);
+}
+.coach-tracker #toast {
+  background: var(--coach-blue);
+  color: #111;
+}
